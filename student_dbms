@@ -1,0 +1,157 @@
+#include<iostream.h>
+#include<conio.h>
+#include<stdio.h>
+#include<fstream>
+#include<string.h>
+#include<stdlib.h>
+#include<iomanip>
+using namespace std;
+int main()
+{
+    FILE *fp,*ft;
+    char another,choice;
+    struct student
+    {
+        char first_name[50],last_name[50];
+        char course[100];
+        int section,age;
+    }e;
+    char xfirst_name[50],xlast_name[50];
+    long int recsize;
+    fp=fopen("users.txt","rb+");
+    if(fp==NULL)
+    {
+        fp=fopen("users.txt","wb+");
+        if(fp==NULL)
+        {
+            cout<<"Cannot open file";
+            return 0;
+        }
+    }
+    recsize=sizeof(e);
+    while(1){
+        clrscr;
+        
+        cout<<"\t\t==== STUDENT DATABASE MANAGEMENT SYSTEM ====";
+        cout<<"\n\n";
+        cout<<"\n\t\t 1.Add Records";
+        cout<<"\n\t\t 2.List Records";
+        cout<<"\n\t\t 3.Modify Records";
+        cout<<"\n\t\t 4.Delete Records";
+        cout<<"\n\t\t 5.Exit prgs";
+        cout<<"\n\n";
+        cout<<"\t Select your choice:=>";
+        fflush(stdin);
+        choice=getchar();
+        switch(choice)
+        {
+            case '1':
+                          fseek(fp,0,SEEK_END);
+                          another='Y';
+                          while(another=='Y'||another=='y')
+                          {
+                              clrscr;
+                              cout<<"Enter your First name : ";
+                              cin>>e.first_name;
+                              cout<<"Enter your Last name : ";
+                              cin>>e.last_name;
+                              cout<<"Enter your Age: ";
+                              cin>>e.age;
+                              cout<<"Enter your Course : ";
+                              cin>>e.course;
+                              cout<<"Enter your Section : ";
+                              cin>>e.section;
+                              fwrite(&e,recsize,1,fp);
+                              cout<<"\n Add Another Record (Y/N)";
+                              fflush(stdin);
+                              another=getchar();
+                          }
+                          break;
+            case '2':
+            clrscr;
+            rewind(fp);
+            cout<<"=== View The Records In The Database ===";
+            cout<<"\n";
+            while(fread(&e,recsize,1,fp)==1)
+            {
+                cout<<"\n";
+                cout<<"\n"<<e.first_name<<e.last_name<<e.age;
+                cout<<"\n";
+                cout<<"\n"<<e.course<<e.section; 
+            }
+            cout<<"\n\n";
+            break;
+            case '3':
+            clrscr;
+             another='Y';
+                   while(another=='Y'||another=='y')
+                    {
+                              cout<<"\n Enter the last name of the student : ";
+                              cin>>xlast_name;
+                              
+                              rewind(fp);
+                              while(fread(&e,recsize,1,fp)==1)
+                              {
+                              if(strcmp(e.last_name,xlast_name)==0)
+                              {
+                              cout<<"Enter your First name : ";
+                              cin>>e.first_name;
+                              cout<<"Enter your Last name : ";
+                              cin>>e.last_name;
+                              cout<<"Enter your Age: ";
+                              cin>>e.age;
+                              cout<<"Enter your Course : ";
+                              cin>>e.course;
+                              cout<<"Enter your Section : ";
+                              cin>>e.section;
+
+                              
+                              fseek(fp,- recsize,SEEK_CUR);
+                              fwrite(&e,recsize,1,fp);
+                             break;
+                          }
+                          else
+                            cout<<"record not found";
+                    }
+                    cout<<"\n Modify Another Record (Y/N)";
+                    fflush(stdin);
+                    another=getchar();
+                }
+                          break;
+            case '4':
+            clrscr;
+            another='Y';
+            while(another=='Y'||another=='y')
+                          {
+                              cout<<"\n Enter the last name of the student : ";
+                              cin>>xlast_name;
+                              ft=fopen("temp.dat","wb+");
+                              rewind(fp);
+                               
+                              while(fread(&e,recsize,1,fp)==1){
+                              if(strcmp(e.last_name,xlast_name)==0)
+                              {
+                                  fwrite(&e,recsize,1,ft);
+                              }
+                              fclose(fp);
+                              fclose(ft);
+                              remove("user.txt");
+                              rename("temp.dat","users.txt");
+                              
+                              fp=fopen("users.txt","rb+");
+                          } 
+                              cout<<"Delete Another Record(Y/N)";
+                              fflush(stdin);
+                              another=getchar();
+                              }
+                              break;
+            case '5' :
+            fclose(fp);
+            cout<<"\n\n";
+            cout<<"\t\t  THANK YOU FOR USING THIS SOFTWARE ";
+            cout<<"\n\n";
+            exit(0);
+       }
+}
+return 0;
+}
